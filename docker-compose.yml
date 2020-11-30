@@ -8,10 +8,10 @@ services:
       dockerfile: Dockerfile
     environment:
       FLASK_ENV: development
-      FLASK_DEBUG: 0
       REDIS_HOST: redis
     ports:
       - 8000:8000
+    command: gunicorn -c app/config.py app.app:app
 
   redis:
     container_name: cache

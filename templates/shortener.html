@@ -1,0 +1,56 @@
+{% extends "index.html" %}
+
+
+{% block shortener %}
+    <script>
+        $(document).ready(function() {
+            function copy_text() {
+                let copyText = document.getElementById("short_link");
+
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+
+                document.execCommand("copy");
+            }
+
+            function shortify() {
+                let url = $("#url").val();
+
+                $.ajax({
+                    url: '/shortify',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({'url': url}),
+                    dataType: 'json',
+                    success: function (data) {
+                        $("#short_link").val(data['short_link'])
+                                        .removeAttr("hidden");
+                        $("#short_link_label").removeAttr("hidden");
+                        copy_text();
+                    }
+                });
+            }
+
+            $("#url").keyup(function(event) {
+                if (event.keyCode === 13) {
+                    $("#shortify").click();
+                }
+            });
+
+            $("#shortify").click(shortify);
+
+            $("#short_link").click(copy_text);
+        });
+    </script>
+
+    <div class="jumbotron m-12">
+        <label for="url"></label>
+        <input id="url" type="text" placeholder="Input URL you want to shortify" class="form-control my-5">
+
+        <button id="shortify" class="btn btn-primary btn-lg btn-block mb-5">Shortify</button>
+
+        <h1 id="short_link_label" hidden>Click to Copy</h1>
+        <input id="short_link" class="btn btn-secondary btn-lg btn-block" type="text" value="" hidden data-toggle="tooltip" data-placement="bottom" title="Click to Copy">
+    </div>
+
+{% endblock %}
